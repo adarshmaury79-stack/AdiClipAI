@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#09090f">
+<title>AdiclipAI — Turn long videos into standout clips</title>
+<style>
+:root{--bg:#09090f;--panel:#11121b;--panel2:#171824;--line:#282a3a;--text:#f7f7fb;--muted:#9b9db2;--purple:#9b6cff;--blue:#5e8cff;--mint:#5ce1c0;--danger:#ff6e88;--radius:20px}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 85% -10%,#29204b 0,transparent 35%),var(--bg);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}button,input,select{font:inherit}button{cursor:pointer}.app{min-height:100vh}.topbar{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,5vw,68px);border-bottom:1px solid #ffffff10;background:#09090fc9;backdrop-filter:blur(18px);position:sticky;top:0;z-index:10}.brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--text)}.brand-mark{width:39px;height:39px;display:grid;place-items:center;border-radius:13px;background:linear-gradient(140deg,#a16cff,#5b65ff);box-shadow:0 6px 25px #895eff40}.brand-mark svg{width:25px;height:25px}.brand-name{font-size:20px;font-weight:800;letter-spacing:-.8px}.brand-name span{color:#a98aff}.top-right{display:flex;align-items:center;gap:10px}.badge{border:1px solid #3b3157;background:#1a1527;color:#c8b3ff;padding:7px 11px;border-radius:999px;font-size:12px;font-weight:700}.avatar{height:36px;width:36px;border-radius:50%;display:grid;place-items:center;background:#242538;border:1px solid #41435a;font-weight:800}.main{max-width:1160px;margin:auto;padding:50px 22px 70px}.hero{text-align:center;max-width:790px;margin:0 auto 34px}.eyebrow{display:inline-flex;align-items:center;gap:8px;border:1px solid #343047;background:#171322;color:#c7b7ff;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:750;letter-spacing:.3px}.spark{color:#b29aff}.hero h1{font-size:clamp(34px,5.5vw,58px);line-height:1.08;letter-spacing:-2.2px;margin:20px 0 15px;font-weight:850}.gradient{background:linear-gradient(90deg,#c8a5ff,#7c9dff 55%,#5ce1c0);-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{font-size:16px;color:var(--muted);max-width:620px;margin:auto}.workspace{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);gap:20px;align-items:start}.card{background:linear-gradient(180deg,#141520,#10111a);border:1px solid var(--line);border-radius:var(--radius);padding:23px;box-shadow:0 16px 45px #00000018}.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px}.card-head h2{font-size:17px;margin:0;letter-spacing:-.3px}.step{font-size:11px;font-weight:800;color:#bda8ff;background:#29203d;border-radius:7px;padding:5px 8px}.source-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#0a0b12;border:1px solid #262738;border-radius:13px;padding:5px;margin-bottom:17px}.source-tab{border:0;background:transparent;color:var(--muted);border-radius:9px;padding:11px 8px;font-weight:700}.source-tab.active{background:#29213d;color:#e1d4ff;box-shadow:inset 0 0 0 1px #55417c}.field-label{display:block;font-size:12px;color:#c7c8d6;font-weight:750;margin:0 0 8px}.input-wrap{display:flex;gap:8px}.text-input{min-width:0;flex:1;background:#0b0c13;border:1px solid #303144;color:var(--text);border-radius:12px;padding:13px 14px;outline:none;width:100%}.text-input:focus{border-color:#9471ed;box-shadow:0 0 0 3px #9471ed20}.text-input::placeholder{color:#66697e}.subnote{font-size:11px;color:#83869c;margin:8px 0 0}.upload-zone{border:1px dashed #51466e;border-radius:15px;background:linear-gradient(135deg,#191527,#11131e);padding:27px 18px;text-align:center;transition:.2s}.upload-zone.drag{border-color:#a78bfa;background:#211b35}.upload-icon{width:47px;height:47px;border-radius:15px;display:grid;place-items:center;margin:0 auto 12px;background:#2a2140;color:#c7b4ff}.upload-zone strong{display:block;font-size:14px}.upload-zone p{color:var(--muted);font-size:12px;margin:5px 0 14px}.btn{border:0;border-radius:11px;padding:11px 15px;font-weight:800;transition:transform .15s,filter .15s}.btn:hover{filter:brightness(1.08);transform:translateY(-1px)}.btn-primary{background:linear-gradient(100deg,#9c6bff,#6e78ff);color:white;box-shadow:0 8px 24px #8765ff2b}.btn-secondary{background:#202130;border:1px solid #35364b;color:#e8e8f2}.btn-quiet{background:transparent;color:#aaaac0;border:1px solid #303144}.btn-wide{width:100%;margin-top:17px;padding:14px}.hidden{display:none!important}.file-meta{display:flex;align-items:center;gap:10px;text-align:left;background:#11121b;border:1px solid #303144;padding:11px;border-radius:12px;margin-top:14px}.file-icon{width:36px;height:36px;display:grid;place-items:center;background:#22243a;color:#b6a2ff;border-radius:10px;flex-shrink:0}.file-info{min-width:0;flex:1}.file-info strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}.file-info small{color:var(--muted);font-size:11px}.remove-file{background:none;border:0;color:#a6a8bb;font-size:20px}.preview{margin-top:14px;border-radius:13px;background:#07080d;overflow:hidden;border:1px solid #2c2e40;min-height:120px;display:grid;place-items:center}.preview video{display:block;width:100%;max-height:290px;background:#050509}.preview-placeholder{padding:22px;text-align:center;color:#74778e;font-size:12px}.preview-placeholder svg{display:block;margin:0 auto 9px;opacity:.7}.right-card{position:sticky;top:94px}.section-label{font-size:12px;font-weight:800;color:#d3d4e1;margin:19px 0 10px}.section-label:first-of-type{margin-top:0}.format-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.format-option{border:1px solid #303144;background:#0e0f17;border-radius:13px;padding:14px 12px;text-align:left;color:var(--text);display:flex;gap:11px;align-items:center}.format-option.selected{border-color:#9270ec;background:#211a32;box-shadow:inset 0 0 0 1px #9270ec40}.format-icon{height:42px;width:31px;border:2px solid #a8a0c7;border-radius:5px;display:grid;place-items:center;color:#bba7ff;flex-shrink:0}.format-icon.landscape{width:42px;height:27px}.format-option strong{font-size:12px;display:block}.format-option small{font-size:10px;color:var(--muted);display:block;margin-top:2px}.chips{display:flex;gap:7px;flex-wrap:wrap}.chip{border:1px solid #303144;background:#0e0f17;color:#b9bbcd;border-radius:9px;padding:8px 11px;font-size:12px;font-weight:700}.chip.selected{background:#25203a;color:#d9caff;border-color:#7860b2}.select{background:#0e0f17;border:1px solid #303144;color:#f2f2f8;border-radius:10px;padding:11px;width:100%;outline:none}.range-row{display:flex;align-items:center;gap:12px}.range-row input{width:100%;accent-color:#9b6cff}.range-value{color:#cdbaff;font-weight:800;font-size:12px;white-space:nowrap}.info-box{display:flex;gap:10px;background:#121a22;border:1px solid #243c3c;color:#a7c8c8;border-radius:12px;padding:12px;font-size:11px;margin-top:17px}.info-box svg{flex-shrink:0;margin-top:1px}.status{margin-top:14px;padding:12px 13px;border:1px solid #34364b;border-radius:12px;background:#0c0d14;font-size:12px;color:#bfc1d2;display:none}.status.show{display:block}.status.error{border-color:#75404a;color:#ffb3bd;background:#211116}.status.success{border-color:#2f6557;color:#9df0d8;background:#0e1b19}.progress{height:5px;background:#252638;border-radius:9px;overflow:hidden;margin-top:10px}.progress span{height:100%;display:block;width:0;background:linear-gradient(90deg,#a36cff,#5ce1c0);transition:width .4s}.result-box{margin-top:16px;border:1px solid #334f48;background:#0d1916;border-radius:14px;padding:14px;display:none}.result-box.show{display:block}.result-box h3{font-size:14px;margin:0 0 4px}.result-box p{font-size:11px;color:#9eb8b1;margin:0 0 12px}.footer{text-align:center;color:#73768c;font-size:11px;padding:22px 10px 0}.footer b{color:#aaa2cb}.feature-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}.feature{border:1px solid #252638;background:#10111a;border-radius:14px;padding:14px;display:flex;gap:10px;align-items:flex-start}.feature-icon{color:#b39aff;font-size:18px}.feature strong{display:block;font-size:12px}.feature small{color:var(--muted);font-size:10px}.disclaimer{color:#81849a;font-size:11px;line-height:1.6;margin-top:14px}.yt-help{margin-top:13px;padding:12px;border:1px solid #37314b;background:#171321;border-radius:11px;color:#b8aecf;font-size:11px;line-height:1.5}
+@media(max-width:800px){.main{padding-top:34px}.workspace{grid-template-columns:1fr}.right-card{position:static}.hero h1{letter-spacing:-1.5px}.feature-row{grid-template-columns:1fr}.topbar{height:66px}.brand-name{font-size:18px}.badge{display:none}}
+@media(max-width:420px){.main{padding-left:13px;padding-right:13px}.card{padding:16px}.hero h1{font-size:34px}.hero p{font-size:14px}.format-option{padding:11px 8px;gap:8px}.format-option strong{font-size:11px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <a class="brand" href="#" aria-label="AdiclipAI home">
+    <span class="brand-mark"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M7 22.5 15.9 5l9.1 17.5h-5.2l-3.9-7.8-3.8 7.8H7Z" fill="white"/><path d="m19.5 25.5 3.3-6.2 3.1 6.2h-6.4Z" fill="#c5b2ff"/><path d="M5 26h22" stroke="white" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+    <span class="brand-name">Adi<span>clip</span>AI</span>
+  </a>
+  <div class="top-right"><span class="badge">✦ AI VIDEO STUDIO</span><span class="avatar">A</span></div>
+</header>
+<main class="main">
+  <section class="hero">
+    <div class="eyebrow"><span class="spark">✦</span> YOUR VIDEO. MORE POSSIBILITIES.</div>
+    <h1>Long videos in.<br><span class="gradient">Standout clips out.</span></h1>
+    <p>Turn your videos into Shorts, Reels and full-length edits. Start with a video upload or a YouTube link.</p>
+  </section>
+  <div class="workspace">
+    <section class="card">
+      <div class="card-head"><h2>Start with your video</h2><span class="step">STEP 01</span></div>
+      <div class="source-tabs" role="tablist" aria-label="Video source">
+        <button class="source-tab active" id="uploadTab" type="button">↑ Upload video</button>
+        <button class="source-tab" id="youtubeTab" type="button">▶ YouTube link</button>
+      </div>
+      <div id="uploadPanel">
+        <label class="field-label">Your source video</label>
+        <div class="upload-zone" id="dropZone">
+          <div class="upload-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14.5v4A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <strong>Drop your video here</strong><p>or choose a file from your device</p>
+          <button class="btn btn-secondary" id="chooseFile" type="button">Choose video</button>
+          <p style="margin:12px 0 0">MP4, WebM, MOV · Processing depends on device memory</p>
+          <input id="fileInput" type="file" accept="video/*" class="hidden">
+        </div>
+        <div id="fileMeta" class="file-meta hidden"><div class="file-icon">▶</div><div class="file-info"><strong id="fileName">video.mp4</strong><small id="fileDetails">Ready to preview</small></div><button id="removeFile" class="remove-file" aria-label="Remove video" type="button">×</button></div>
+        <div class="preview" id="previewBox"><div class="preview-placeholder"><svg width="34" height="34" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.4"/><path d="m10 9 5 3-5 3V9Z" fill="currentColor"/></svg>Your video preview will appear here</div></div>
+      </div>
+      <div id="youtubePanel" class="hidden">
+        <label class="field-label" for="ytUrl">YouTube video URL</label>
+        <div class="input-wrap"><input class="text-input" id="ytUrl" type="url" placeholder="https://www.youtube.com/watch?v=..." autocomplete="url"></div>
+        <div class="yt-help">Paste a public YouTube link. This standalone HTML can validate the link and open a preview, but it cannot download/process YouTube video files by itself. Actual link-based clipping needs a connected backend or authorized video-processing service.</div>
+        <div class="preview" id="ytPreview"><div class="preview-placeholder">YouTube preview will appear here</div></div>
+        <button class="btn btn-secondary btn-wide" id="previewYt" type="button">Preview YouTube video ↗</button>
+      </div>
+      <div class="disclaimer">Only use videos you own or have permission to edit. Some source links may restrict downloading or processing.</div>
+    </section>
+    <section class="card right-card">
+      <div class="card-head"><h2>Customize your clips</h2><span class="step">STEP 02</span></div>
+      <div class="section-label">Output format</div>
+      <div class="format-grid">
+        <button class="format-option selected" data-format="shorts" type="button"><span class="format-icon">▯</span><span><strong>Short-form</strong><small>9:16 · Shorts & Reels</small></span></button>
+        <button class="format-option" data-format="long" type="button"><span class="format-icon landscape">▭</span><span><strong>Long-form</strong><small>16:9 · YouTube</small></span></button>
+      </div>
+      <div class="section-label">Framing</div><select class="select" id="framing"><option value="fill">Fill frame (crop edges)</option><option value="fit">Fit whole video (blurred background)</option></select>
+      <div class="section-label">Clip length</div>
+      <div class="chips" id="lengthChips"><button class="chip" data-seconds="15" type="button">15 sec</button><button class="chip selected" data-seconds="30" type="button">30 sec</button><button class="chip" data-seconds="45" type="button">45 sec</button><button class="chip" data-seconds="60" type="button">60 sec</button></div>
+      <div class="section-label">How should clips be selected?</div>
+      <select class="select" id="clipMode"><option value="ai">AI: find best moments (Gemini, up to 3 clips)</option><option value="manual">Choose a section manually</option></select>
+      <div id="manualControls" class="hidden">
+        <div class="section-label">Clip start time</div>
+        <div class="range-row"><input id="startRange" type="range" min="0" max="60" value="0"><span id="startLabel" class="range-value">0:00</span></div>
+        <div class="section-label">Clip end time</div>
+        <div class="range-row"><input id="endRange" type="range" min="1" max="60" value="30"><span id="endLabel" class="range-value">0:30</span></div>
+      </div>
+      <div class="section-label">Captions</div>
+      <select class="select" id="captions"><option value="on">Auto-captions (AI videos only)</option><option value="off">No captions</option></select>
+      <button class="btn btn-primary btn-wide" id="makeClips" type="button">✦ &nbsp; Generate my clips</button>
+      <div class="status" id="statusBox" role="status" aria-live="polite"></div>
+      <div class="progress hidden" id="progress"><span id="progressBar"></span></div>
+      <div class="result-box" id="resultBox"><h3>Video is ready to export</h3><p id="resultText">Your selected section has been prepared.</p><div id="clipList"></div><button class="btn btn-primary" id="downloadBtn" type="button">Download clip</button></div>
+      <div class="info-box"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 11v5m0-8h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><div><b>How it works</b><br>AI mode: your video goes to our server, Gemini picks the best moments, and MP4 clips with captions are rendered. Manual mode: trimmed in your browser. Only upload videos you own.</div></div>
+    </section>
+  </div>
+  <div class="feature-row">
+    <div class="feature"><span class="feature-icon">✦</span><div><strong>Highlight discovery</strong><small>Designed for AI-picked moments</small></div></div>
+    <div class="feature"><span class="feature-icon">▯</span><div><strong>Short + long format</strong><small>Vertical or landscape output</small></div></div>
+    <div class="feature"><span class="feature-icon">↗</span><div><strong>Creator-friendly workflow</strong><small>Upload, review, export</small></div></div>
+  </div>
+  <div class="footer">Made for creators · <b>AdiclipAI</b> <span id="year"></span><br>Powered by Gemini + FFmpeg.</div>
+</main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let currentFile=null,objectUrl=null,videoDuration=0,selectedFormat='shorts',clipSeconds=30,exportUrl=null;
+$('year').textContent='© '+new Date().getFullYear();
+function setTab(which){const upload=which==='upload';$('uploadTab').classList.toggle('active',upload);$('youtubeTab').classList.toggle('active',!upload);$('uploadPanel').classList.toggle('hidden',!upload);$('youtubePanel').classList.toggle('hidden',upload);hideStatus();$('resultBox').classList.remove('show')}
+$('uploadTab').onclick=()=>setTab('upload');$('youtubeTab').onclick=()=>setTab('youtube');
+$('chooseFile').onclick=()=>$('fileInput').click();
+$('fileInput').addEventListener('change',e=>{if(e.target.files[0])loadFile(e.target.files[0])});
+function loadFile(file){if(!file.type.startsWith('video/')){showStatus('Please choose a valid video file.','error');return}currentFile=file;if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl=URL.createObjectURL(file);$('fileName').textContent=file.name;$('fileDetails').textContent=formatBytes(file.size)+' · Loading video…';$('fileMeta').classList.remove('hidden');$('previewBox').innerHTML='<video id="sourceVideo" controls playsinline preload="metadata"></video>';$('sourceVideo').src=objectUrl;$('sourceVideo').onloadedmetadata=()=>{videoDuration=$('sourceVideo').duration||0;$('fileDetails').textContent=formatBytes(file.size)+' · '+formatTime(videoDuration);configureRanges();};hideStatus();$('resultBox').classList.remove('show')}
+$('removeFile').onclick=()=>{currentFile=null;videoDuration=0;$('fileInput').value='';$('fileMeta').classList.add('hidden');$('previewBox').innerHTML='<div class="preview-placeholder">Your video preview will appear here</div>';if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl=null;hideStatus();$('resultBox').classList.remove('show')};
+const dz=$('dropZone');dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag')});dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0])});
+function formatBytes(n){if(n<1024*1024)return (n/1024).toFixed(0)+' KB';return (n/1024/1024).toFixed(1)+' MB'}
+function formatTime(s){s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function configureRanges(){const max=Math.max(1,Math.floor(videoDuration||3600));$('startRange').max=max;$('endRange').max=max;$('startRange').value=0;$('endRange').value=Math.min(max,clipSeconds);updateRangeLabels()}
+function updateRangeLabels(){$('startLabel').textContent=formatTime(+$('startRange').value);$('endLabel').textContent=formatTime(+$('endRange').value)}
+$('startRange').addEventListener('input',()=>{if(+$('startRange').value>=+$('endRange').value)$('endRange').value=Math.min(+$('endRange').max,+$('startRange').value+1);updateRangeLabels()});
+$('endRange').addEventListener('input',()=>{if(+$('endRange').value<=+$('startRange').value)$('startRange').value=Math.max(0,+$('endRange').value-1);updateRangeLabels()});
+document.querySelectorAll('[data-format]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-format]').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');selectedFormat=b.dataset.format});
+document.querySelectorAll('[data-seconds]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-seconds]').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');clipSeconds=+b.dataset.seconds;if($('clipMode').value==='manual'){$('endRange').value=Math.min(+$('endRange').max,+$('startRange').value+clipSeconds);updateRangeLabels()}});
+$('clipMode').onchange=()=>{$('manualControls').classList.toggle('hidden',$('clipMode').value!=='manual')};
+function showStatus(msg,type=''){const el=$('statusBox');el.textContent=msg;el.className='status show '+type}
+function hideStatus(){$('statusBox').className='status';$('progress').classList.add('hidden');$('progressBar').style.width='0%'}
+$('previewYt').onclick=()=>{const url=$('ytUrl').value.trim();const id=getYoutubeId(url);if(!id){showStatus('Enter a valid YouTube video URL first.','error');return}$('ytPreview').innerHTML='<iframe title="YouTube video preview" width="100%" height="240" src="https://www.youtube-nocookie.com/embed/'+id+'" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';showStatus('Preview loaded. To clip this YouTube video, connect a backend that can legally access and process the source.','')}
+function getYoutubeId(url){try{const u=new URL(url);if(u.hostname==='youtu.be')return u.pathname.slice(1).split('/')[0];if(['youtube.com','www.youtube.com','m.youtube.com','youtube-nocookie.com'].includes(u.hostname)){if(u.pathname==='/watch')return u.searchParams.get('v');const m=u.pathname.match(/^\/(embed|shorts|live)\/([^/?]+)/);return m?m[2]:null}}catch(e){}return null}
+const runExport=async()=>{$('clipList').innerHTML='';document.querySelector('#resultBox h3').textContent='Video is ready to export';$('downloadBtn').classList.remove('hidden');hideStatus();$('resultBox').classList.remove('show');if(!$('uploadPanel').classList.contains('hidden')&&!currentFile){showStatus('Upload a video first, or switch to the YouTube link tab.','error');return}if(!$('youtubePanel').classList.contains('hidden')){if(!getYoutubeId($('ytUrl').value.trim())){showStatus('Paste a valid YouTube video link first.','error');return}showStatus('The link is valid, but this HTML-only preview cannot fetch or cut the YouTube video. A backend/video-processing service must be connected for real clipping.','error');return}if(!currentFile){showStatus('Choose a video to continue.','error');return}if(!$('sourceVideo')){showStatus('Video preview is still loading. Try again in a moment.','error');return}if($('clipMode').value==='ai'){await serverRun();return}
+const start=+$('startRange').value,end=+$('endRange').value;if(end<=start){showStatus('End time must be after start time.','error');return}if(videoDuration&&end>videoDuration){showStatus('End time exceeds the video duration.','error');return}
+if(!window.MediaRecorder){showStatus('This browser does not support in-browser video export. Try a recent Chrome browser.','error');return}
+const vid=$('sourceVideo');const canvas=document.createElement('canvas');const vertical=selectedFormat==='shorts';canvas.width=vertical?720:1280;canvas.height=vertical?1280:720;const ctx=canvas.getContext('2d');const draw=()=>{if(!vid.videoWidth||!vid.videoHeight)return;ctx.fillStyle='#08080d';ctx.fillRect(0,0,canvas.width,canvas.height);const vw=vid.videoWidth,vh=vid.videoHeight,cover=Math.max(canvas.width/vw,canvas.height/vh);let sc=cover;if($('framing').value==='fit'){const bw=vw*cover,bh=vh*cover;ctx.filter='blur(28px) brightness(.55)';ctx.drawImage(vid,(canvas.width-bw)/2,(canvas.height-bh)/2,bw,bh);ctx.filter='none';sc=Math.min(canvas.width/vw,canvas.height/vh)}const w=vw*sc,h=vh*sc;ctx.drawImage(vid,(canvas.width-w)/2,(canvas.height-h)/2,w,h)};let raf;const render=()=>{draw();raf=requestAnimationFrame(render)};const stream=canvas.captureStream(30);try{if(vid.captureStream){const vs=vid.captureStream();vs.getAudioTracks().forEach(t=>stream.addTrack(t))}}catch(e){}
+let mime='video/webm;codecs=vp9,opus';if(!MediaRecorder.isTypeSupported(mime))mime='video/webm;codecs=vp8,opus';if(!MediaRecorder.isTypeSupported(mime))mime='video/webm';if(!MediaRecorder.isTypeSupported(mime)&&MediaRecorder.isTypeSupported('video/mp4'))mime='video/mp4';const ext=mime.includes('mp4')?'mp4':'webm';
+let recorder;try{recorder=new MediaRecorder(stream,{mimeType:mime})}catch(e){showStatus('Could not start the video exporter in this browser. Try Chrome on a newer device.','error');return}
+const chunks=[];recorder.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};recorder.onerror=()=>{unlock();cancelAnimationFrame(raf);showStatus('Export failed. The video may be too large for available device memory.','error')};recorder.onstop=()=>{unlock();cancelAnimationFrame(raf);try{stream.getTracks().forEach(t=>t.stop())}catch(e){}if(exportUrl)URL.revokeObjectURL(exportUrl);const blob=new Blob(chunks,{type:mime});exportUrl=URL.createObjectURL(blob);$('downloadBtn').onclick=()=>{const a=document.createElement('a');a.href=exportUrl;a.download='AdiclipAI-clip-'+Math.round(start)+'s.'+ext;document.body.appendChild(a);a.click();a.remove()};$('resultText').textContent='Clip exported as '+ext.toUpperCase()+'. Selected layout: '+(vertical?'9:16 vertical':'16:9 landscape')+'. Captions are not included in this preview.';$('resultBox').classList.add('show');showStatus('Clip export complete. Download your video below.','success');$('progressBar').style.width='100%';};
+showStatus('Preparing your clip… keep this tab open. Large videos may take time.');$('progress').classList.remove('hidden');$('progressBar').style.width='8%';vid.pause();vid.currentTime=start;await new Promise(resolve=>{const done=()=>{vid.removeEventListener('seeked',done);resolve()};vid.addEventListener('seeked',done);setTimeout(resolve,1500)});render();try{recorder.start(250);await vid.play();recording=true}catch(e){cancelAnimationFrame(raf);recorder.onstop=null;try{recorder.stop()}catch(_){}showStatus('Tap the video play button once, then try generating again. Browser playback was blocked.','error');try{stream.getTracks().forEach(t=>t.stop())}catch(_){}return}
+const total=end-start;let stopped=false;const finish=()=>{if(stopped)return;stopped=true;clearInterval(interval);vid.removeEventListener('timeupdate',onTime);vid.pause();try{if(recorder.state!=='inactive')recorder.stop()}catch(e){}};const onTime=()=>{if(vid.currentTime>=end)finish()};const interval=setInterval(()=>{const elapsed=Math.max(0,vid.currentTime-start);$('progressBar').style.width=Math.min(95,8+elapsed/total*87)+'%';if(vid.currentTime>=end||vid.ended)finish()},150);vid.addEventListener('timeupdate',onTime);
+};
+
+let exporting=false,recording=false;
+function unlock(){recording=false;exporting=false;$('makeClips').disabled=false}
+$('makeClips').onclick=async()=>{if(exporting)return;exporting=true;$('makeClips').disabled=true;try{await runExport()}catch(e){showStatus('Something went wrong: '+(e.message||e),'error')}if(!recording)unlock()};
+async function autoPick(){
+  if(currentFile.size>500*1024*1024)throw new Error('file too large for auto-pick (500 MB max)');
+  showStatus('Analyzing audio to find the best moment…');$('progress').classList.remove('hidden');$('progressBar').style.width='4%';
+  const AC=window.AudioContext||window.webkitAudioContext;const ac=new AC();
+  const ab=await ac.decodeAudioData(await currentFile.arrayBuffer());ac.close();
+  const ch=ab.getChannelData(0),sr=ab.sampleRate,secs=Math.floor(ab.duration),e=new Float32Array(secs);
+  for(let s=0;s<secs;s++){let sum=0,n=0;for(let i=s*sr;i<(s+1)*sr;i+=16){sum+=ch[i]*ch[i];n++}e[s]=sum/n}
+  const win=Math.min(clipSeconds,secs);let cur=0;for(let i=0;i<win;i++)cur+=e[i];let best=cur,bi=0;
+  for(let i=win;i<secs;i++){cur+=e[i]-e[i-win];if(cur>best){best=cur;bi=i-win+1}}
+  $('startRange').value=bi;$('endRange').value=Math.min(+$('endRange').max,bi+win);updateRangeLabels();
+  showStatus('Best moment found: '+formatTime(bi)+' – '+formatTime(bi+win)+'. Exporting…');
+}
+
+async function serverRun(){
+  const fd=new FormData();fd.append('file',currentFile);fd.append('format',selectedFormat);fd.append('seconds',clipSeconds);fd.append('framing',$('framing').value);fd.append('captions',$('captions').value);
+  $('progress').classList.remove('hidden');$('progressBar').style.width='3%';showStatus('Uploading video…');
+  const job=await new Promise((res,rej)=>{const x=new XMLHttpRequest();x.open('POST','/api/process');
+    x.upload.onprogress=e=>{if(e.lengthComputable){const p=e.loaded/e.total;$('progressBar').style.width=(3+p*17)+'%';showStatus('Uploading… '+Math.round(p*100)+'%')}};
+    x.onload=()=>{let d={};try{d=JSON.parse(x.responseText)}catch(_){}x.status===200?res(d):rej(new Error(d.detail||('Server error '+x.status)))};
+    x.onerror=()=>rej(new Error('Cannot reach server. Open your hosted Render link, not the local file.'));x.send(fd)});
+  while(true){
+    await new Promise(r=>setTimeout(r,2500));
+    const d=await (await fetch('/api/status/'+job.id)).json();
+    if(d.status==='error'){showStatus(d.message||'Processing failed','error');return}
+    $('progressBar').style.width=(20+d.progress*0.8)+'%';showStatus(d.message||'Processing…');
+    if(d.status==='done'){
+      const box=$('clipList');box.innerHTML='';
+      d.clips.forEach((c,i)=>{const w=document.createElement('div');w.style.marginTop='14px';
+        const t=document.createElement('strong');t.textContent=(i+1)+'. '+c.title+' ('+formatTime(c.start)+'–'+formatTime(c.end)+')';
+        const rs=document.createElement('p');rs.textContent=c.reason;
+        const v=document.createElement('video');v.src=c.url;v.controls=true;v.playsInline=true;v.style.cssText='width:100%;max-height:340px;border-radius:10px;background:#000';
+        const a=document.createElement('a');a.href=c.url;a.download='AdiclipAI-clip-'+(i+1)+'.mp4';a.className='btn btn-primary';a.style.cssText='display:inline-block;margin-top:8px;text-decoration:none';a.textContent='Download clip '+(i+1);
+        w.append(t,rs,v,a);box.appendChild(w)});
+      $('downloadBtn').classList.add('hidden');
+      document.querySelector('#resultBox h3').textContent='Your AI clips are ready';
+      $('resultText').textContent=d.clips.length+' clip(s) picked by Gemini. Files are deleted from the server after 1 hour.';
+      $('resultBox').classList.add('show');showStatus('Done! Scroll down to preview and download.','success');$('progressBar').style.width='100%';return}
+  }
+}
+</script>
+</body>
+</html>
