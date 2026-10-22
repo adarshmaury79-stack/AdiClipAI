@@ -49,10 +49,10 @@ def write_ass(path, caps, length, w, h):
     return bool(lines)
 
 
-def ask_gemini(src, url, seconds, count, caps, dur):
+def ask_gemini(src, url, seconds, count, caps, dur, key=""):
     from google import genai
     from google.genai import types
-    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    client = genai.Client(api_key=key or os.environ["GEMINI_API_KEY"])
     f = None
     if url:
         part = types.Part(file_data=types.FileData(file_uri=url))
@@ -141,7 +141,7 @@ def run_job(jid, src, url, o):
             if not is_yt:
                 dur = float(sh(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(src)]).strip())
             j.update(status="working", progress=15, message="AI is watching your video…")
-            raw = ask_gemini(src, url if is_yt else None, o["seconds"], o["count"], o["captions"], dur)
+            raw = ask_gemini(src, url if is_yt else None, o["seconds"], o["count"], o["captions"], dur, o["key"])
             clips = []
             for c in raw:
                 try: a = max(0.0, float(c["start"])); b = float(c["end"])
@@ -178,15 +178,16 @@ def run_job(jid, src, url, o):
 @app.post("/api/process")
 async def process(request: Request, file: UploadFile = File(None), url: str = Form(""), ratio: str = Form("9:16"),
                   quality: str = Form("720"), framing: str = Form("fill"), captions: str = Form("on"),
-                  seconds: int = Form(30), count: int = Form(2)):
-    if not os.environ.get("GEMINI_API_KEY"):
-        raise HTTPException(500, "Server is missing GEMINI_API_KEY")
+                  seconds: int = Form(30), count: int = Form(2), api_key: str = Form("")):
+    api_key = api_key.strip()
+    if not api_key and not os.environ.get("GEMINI_API_KEY"):
+        raise HTTPException(400, "Paste your Gemini API key in Settings")
     url = url.strip()
     if not file and not url.lower().startswith(("http://", "https://")):
         raise HTTPException(400, "Upload a video or paste a valid link")
     ip = (request.headers.get("x-forwarded-for") or request.client.host).split(",")[0].strip()
     key = (ip, datetime.date.today())
-    if usage.get(key, 0) >= DAILY_LIMIT:
+    if not api_key and usage.get(key, 0) >= DAILY_LIMIT:
         raise HTTPException(429, f"Daily limit reached ({DAILY_LIMIT}). Try tomorrow.")
     for p in WORK.iterdir():
         if time.time() - p.stat().st_mtime > 3600: shutil.rmtree(p, ignore_errors=True)
@@ -202,10 +203,10 @@ async def process(request: Request, file: UploadFile = File(None), url: str = Fo
                     out.close(); shutil.rmtree(d, ignore_errors=True)
                     raise HTTPException(413, f"Video too large (max {MAX_MB} MB)")
                 out.write(chunk)
-    usage[key] = usage.get(key, 0) + 1
+    if not api_key: usage[key] = usage.get(key, 0) + 1
     jobs[jid] = {"status": "working", "progress": 2, "message": "Queued…", "clips": []}
     o = dict(ratio=ratio if ratio in ("9:16", "1:1", "4:5", "16:9") else "9:16", quality=quality if quality in ("480", "720", "1080") else "720",
-             fit=framing == "fit", captions=captions == "on", seconds=max(10, min(90, seconds)), count=max(1, min(10, count)))
+             key=api_key, fit=framing == "fit", captions=captions == "on", seconds=max(10, min(90, seconds)), count=max(1, min(10, count)))
     threading.Thread(target=run_job, daemon=True, args=(jid, src, None if file else url, o)).start()
     return {"id": jid}
 
