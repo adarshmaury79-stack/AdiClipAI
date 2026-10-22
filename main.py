@@ -22,22 +22,31 @@ def sh(cmd, cwd=None):
     return r.stdout
 
 
-def srt_time(t):
-    t = max(0, t); h, m, s = int(t // 3600), int(t % 3600 // 60), t % 60
-    return f"{h:02}:{m:02}:{int(s):02},{int((s % 1) * 1000):03}"
+def ass_time(t):
+    t = max(0, t); return f"{int(t // 3600)}:{int(t % 3600 // 60):02}:{t % 60:05.2f}"
 
 
-def write_srt(path, caps, length):
-    out, n = [], 1
+def write_ass(path, caps, length, w, h):
+    """Karaoke captions: spoken words change colour (white -> yellow)."""
+    size = int(min(w, h) * 0.085); mv = int(h * 0.13)
+    head = (f"[Script Info]\nScriptType: v4.00+\nPlayResX: {w}\nPlayResY: {h}\nWrapStyle: 0\n\n[V4+ Styles]\n"
+            "Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, "
+            "ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\n"
+            f"Style: Default,Noto Sans,{size},&H004DE1FF,&H00FFFFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,{max(3, size // 14)},1,2,40,40,{mv},1\n\n"
+            "[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n")
+    lines = []
     for c in caps or []:
-        try:
-            a, b, txt = float(c["start"]), float(c["end"]), str(c["text"]).strip()
-        except Exception:
-            continue
-        if txt and a < length:
-            out.append(f"{n}\n{srt_time(a)} --> {srt_time(min(b, length))}\n{txt}\n"); n += 1
-    Path(path).write_text("\n".join(out), encoding="utf-8")
-    return n > 1
+        try: a, b, txt = float(c["start"]), float(c["end"]), str(c["text"]).strip()
+        except Exception: continue
+        words = txt.replace("{", "").replace("}", "").split()
+        if not words or a >= length: continue
+        b = min(b, length)
+        if b <= a: b = min(length, a + 1)
+        total = sum(len(x) for x in words); cs = max(1, int((b - a) * 100))
+        parts = [f"{{\\k{max(1, int(cs * len(x) / total))}}}{x}" for x in words]
+        lines.append(f"Dialogue: 0,{ass_time(a)},{ass_time(b)},Default,,0,0,0,,{' '.join(parts)}")
+    Path(path).write_text(head + "\n".join(lines) + "\n", encoding="utf-8")
+    return bool(lines)
 
 
 def ask_gemini(src, url, seconds, count, caps, dur):
@@ -57,7 +66,7 @@ def ask_gemini(src, url, seconds, count, caps, dur):
     prompt = f"""You are a short-form video editor. {"The video is %d seconds long." % dur if dur else ""}
 Pick up to {count} of the best standalone moments for Shorts/Reels, best first. Give each a virality score 1-100 (hook, emotion, value, shareability).
 Rules: each clip about {seconds} seconds (between {int(seconds*0.7)} and {int(seconds*1.3)}); start at the beginning of a sentence and end at the end of one; strong hook in the first 3 seconds; no overlap; timestamps are seconds from the start of the video.
-{"For each clip give captions of the speech in the language spoken, max 7 words each, start/end seconds RELATIVE to the clip start." if caps else "Leave captions as an empty list."}
+{"For each clip give captions of the speech in the exact language spoken (Hindi speech in Devanagari script, English speech in English), max 5 words each, exact spoken words, start/end seconds RELATIVE to the clip start." if caps else "Leave captions as an empty list."}
 Return ONLY JSON: {{"clips":[{{"start":12.0,"end":42.0,"title":"short catchy title","reason":"why this works","captions":[{{"start":0.0,"end":2.4,"text":"..."}}]}}]}}"""
     last, data = None, None
     for m in MODELS:
@@ -108,7 +117,7 @@ def vf_chain(w, h, fit, srt):
     else:
         v = f"scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h}"
     if srt:
-        v += f",subtitles={srt}:force_style='FontName=DejaVu Sans,FontSize=13,Bold=1,Outline=2,Shadow=0,Alignment=2,MarginV=40'"
+        v += f",ass={srt}"
     return v
 
 
@@ -153,7 +162,7 @@ def run_job(jid, src, url, o):
             w, h = size_for(o["ratio"], o["quality"])
             for i, (a, b, c) in enumerate(clips):
                 j.update(progress=30 + int(65 * i / len(clips)), message=f"Rendering clip {i+1} of {len(clips)}… (free server is slow, please wait)")
-                srt = f"c{i}.srt" if o["captions"] and write_srt(d / f"c{i}.srt", c.get("captions"), b - a) else None
+                srt = f"c{i}.ass" if o["captions"] and write_ass(d / f"c{i}.ass", c.get("captions"), b - a, w, h) else None
                 sh(["ffmpeg", "-y", "-threads", "2", "-ss", f"{a:.2f}", "-i", str(src), "-t", f"{b-a:.2f}",
                     "-vf", vf_chain(w, h, o["fit"], srt), "-c:v", "libx264", "-preset", "ultrafast", "-crf", "26",
                     "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart", f"clip{i}.mp4"], cwd=d)
