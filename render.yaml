@@ -1,9 +1,0 @@
-services:
-  - type: web
-    name: adiclipai
-    runtime: docker
-    plan: free
-    dockerfilePath: ./Dockerfile
-    dockerContext: .
-    healthCheckPath: /health
-    autoDeploy: true
