@@ -256,9 +256,12 @@ def audio(jid: str, i: int):
 
 @app.get("/")
 def home():
-    page = ROOT / "static" / "index.html"
-    if not page.is_file(): raise HTTPException(503, "Website files are missing")
-    return FileResponse(page)
+    # Support both layouts: static/index.html (recommended) and index.html at repo root.
+    candidates = (ROOT / "static" / "index.html", ROOT / "index.html")
+    page = next((candidate for candidate in candidates if candidate.is_file()), None)
+    if page is None:
+        raise HTTPException(503, "Website files are missing. Put index.html in the project root or static/ folder.")
+    return FileResponse(page, media_type="text/html")
 
 @app.get("/health")
 def health():
