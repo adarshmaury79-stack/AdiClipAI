@@ -95,6 +95,11 @@ input:focus{transform:translateY(-1px)}
 @keyframes rip{to{transform:scale(1);opacity:0}}
 .stack{display:flex;flex-direction:column;gap:14px}
 .row{display:flex;gap:10px;flex-wrap:wrap}
+.upl{display:flex;gap:8px;align-items:stretch}
+.uplbtn{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:10px;padding:15px 16px;border-radius:16px;border:1.5px dashed var(--line);background:transparent;color:var(--ink);font:600 15px inherit;font-family:inherit;cursor:pointer}
+.uplbtn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uplbtn.has{border-style:solid;border-color:var(--vio)}
+.uplx{width:50px;border-radius:16px;border:1.5px solid var(--line);background:transparent;color:var(--ink);font-size:22px;cursor:pointer}
 .link{background:none;border:0;color:var(--vio);font-weight:600;padding:8px 2px;cursor:pointer;align-self:flex-start;transition:opacity .2s,transform .3s var(--ease)}
 .link:active{transform:scale(.94);opacity:.7}
 .chip{position:relative;overflow:hidden;border:1.5px solid var(--line);background:var(--bg2);border-radius:999px;padding:8px 14px;font-size:14px;cursor:pointer;transition:background .3s,color .3s,border-color .3s,transform .35s var(--ease)}
@@ -287,12 +292,18 @@ body.sopen #sheet{transform:none;visibility:visible;transition:transform .55s va
   <!-- input -->
   <section class="view show" id="vIn">
     <h2>Drop a long video. Get the best clips.</h2>
-    <p class="lead">Paste a YouTube link. AdiClipAI finds the best spoken moments and cuts them into captioned clips.</p>
+    <p class="lead">Paste a YouTube link or upload a video. AdiClipAI finds the best spoken moments and cuts them into captioned clips.</p>
     <div class="demobar" id="demoNote" hidden>Preview mode: no server is connected here. Tap <b>Create clips</b> to see a demo of progress, results, captions and download options.</div>
     <form class="stack" id="form" autocomplete="off" novalidate>
       <div class="field">
         <input class="url" id="url" type="url" inputmode="url" placeholder="https://youtube.com/watch?v=..." required>
         <div id="info"></div>
+      </div>
+      <div class="or" style="margin:0">or</div>
+      <div class="upl" id="upl">
+        <input type="file" id="file" accept="video/*,audio/*" hidden>
+        <button type="button" class="uplbtn" id="uplBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg><span id="fileName">Upload a video from your phone</span></button>
+        <button type="button" class="uplx" id="fileX" aria-label="Remove file" hidden>&times;</button>
       </div>
       <button type="button" class="link" id="optBtn">Show options</button>
       <div class="fold" id="opts"><div><div class="grid2">
@@ -458,10 +469,19 @@ $("#url").addEventListener("input",()=>{
 });
 
 /* analyze + poll */
-let jobId=null,lastReq=null;
+let jobId=null,lastReq=null,lastFile=null;
+const MAXMB=500;
+$("#uplBtn").addEventListener("click",()=>$("#file").click());
+$("#file").addEventListener("change",e=>{
+  const f=e.target.files[0];if(!f)return;
+  if(f.size>MAXMB*1048576){e.target.value="";return toast("File is too big. Max "+MAXMB+" MB.")}
+  lastFile=f;$("#fileName").textContent=f.name;$("#uplBtn").classList.add("has");$("#fileX").hidden=false;$("#url").value="";
+});
+$("#fileX").addEventListener("click",()=>{lastFile=null;$("#file").value="";$("#fileName").textContent="Upload a video from your phone";$("#uplBtn").classList.remove("has");$("#fileX").hidden=true});
+$("#url").addEventListener("input",()=>{if(lastFile&&$("#url").value)$("#fileX").click()});
 async function onGo(e){
   if(e)e.preventDefault();
-  if(!PREVIEW&&!/^https?:\/\//i.test($("#url").value.trim())){const u=$("#url");u.classList.remove("shake");void u.offsetWidth;u.classList.add("shake");u.focus();return toast("Paste a YouTube link first")}
+  if(!PREVIEW&&!lastFile&&!/^https?:\/\//i.test($("#url").value.trim())){const u=$("#url");u.classList.remove("shake");void u.offsetWidth;u.classList.add("shake");u.focus();return toast("Paste a YouTube link first")}
   const [mn,mx]=$("#len").value.split("-").map(Number),st=+$("#start").value,en=+$("#end").value;
   if(en&&en<=st)return toast("End time must be after the start time");
   lastReq={url:$("#url").value.trim(),start:st,end:en,minlen:mn,maxlen:mx,count:+$("#count").value,keywords:$("#kw").value,lang:$("#lang").value};
@@ -489,6 +509,7 @@ async function demoRun(){
 async function startJob(){
   setProg(0,"Starting","Starting");$("#pErr").hidden=true;$("#retry").hidden=true;show("#vProg");
   if(PREVIEW)return demoRun();
+  if(lastFile)return uploadJob();
   try{
     const r=await fetch("/api/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(lastReq)});
     if(!r.ok){const d=await r.json().catch(()=>null);if(!d){goPreview();return demoRun()}throw new Error(d.detail||"Request failed.")}
@@ -497,6 +518,20 @@ async function startJob(){
 }
 function setProg(p,stage,title){$("#pBar").style.width=p+"%";$("#pPct").textContent=p+"%";$("#pStage").textContent=stage;if(title)$("#pTitle").textContent=title}
 function fail(m){$("#pErr").textContent=m;$("#pErr").hidden=false;$("#retry").hidden=false}
+function uploadJob(){
+  const fd=new FormData();fd.append("file",lastFile,lastFile.name);fd.append("opts",JSON.stringify(lastReq));
+  Object.entries(lastReq).forEach(([k,v])=>{if(k!=="url")fd.append(k,v)});
+  const x=new XMLHttpRequest();x.open("POST","/api/upload");
+  x.upload.onprogress=e=>{if(e.lengthComputable)setProg(Math.round(e.loaded/e.total*20),"Uploading your video","Uploading")};
+  x.onerror=()=>{goPreview();demoRun()};
+  x.onload=()=>{
+    let d=null;try{d=JSON.parse(x.responseText)}catch(_){}
+    if(x.status>=200&&x.status<300&&d&&d.id){jobId=d.id;poll(jobId)}
+    else if(!d){goPreview();demoRun()}
+    else fail(d.detail||"Upload failed.");
+  };
+  x.send(fd);
+}
 async function poll(id){
   while(true){
     await sleep(1200);
