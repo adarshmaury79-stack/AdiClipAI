@@ -97,7 +97,7 @@ def get_model():
     with _model_lock:
         if _model is None:
             from faster_whisper import WhisperModel
-            _model = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8")
+            _model = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8", cpu_threads=os.cpu_count() or 2)
         return _model
 
 
@@ -105,7 +105,7 @@ def prepare_source(raw, out):
     """Make a browser friendly mp4 (h264/aac, max 720p). Copies if already fine."""
     w, h, dur, codec = clipper.probe(raw)
     ext = os.path.splitext(raw)[1].lower()
-    if codec == "h264" and h <= 720 and ext in (".mp4", ".mov", ".m4v"):
+    if codec == "h264" and h <= 1080 and ext in (".mp4", ".mov", ".m4v"):
         clipper.run(["ffmpeg", "-y", "-loglevel", "error", "-i", raw, "-c", "copy",
                      "-movflags", "+faststart", out])
     else:
@@ -124,7 +124,11 @@ def analyze(job, src, req):
     end = min(end, dur)
     if start >= end:
         raise RuntimeError("Start time is after the end of the video.")
-    upd(job, 40, "Transcribing speech")
+    upd(job, 40, "Loading speech model")
+    t_load = time.time()
+    get_model()
+    print(f"[job {job['id']}] model load: {time.time() - t_load:.1f}s", flush=True)
+    upd(job, 42, "Transcribing speech")
     wav = job["dir"] + "/audio.wav"
     clipper.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", str(start), "-t", str(end - start),
                  "-i", src, "-vn", "-ac", "1", "-ar", "16000", wav])
@@ -200,6 +204,7 @@ def run_upload_job(job, raw, req):
         JOB_SLOT.acquire()
         got = True
         upd(job, 22, "Preparing video", job.get("title"))
+        t0 = time.time()
         try:
             prepare_source(raw, job["dir"] + "/src.mp4")
         except RuntimeError:
@@ -208,7 +213,10 @@ def run_upload_job(job, raw, req):
         if dur > MAX_VIDEO_MIN * 60:
             raise RuntimeError(f"Video is longer than {MAX_VIDEO_MIN} minutes.")
         os.remove(raw)
+        print(f"[job {job['id']}] prepare: {time.time() - t0:.1f}s", flush=True)
+        t1 = time.time()
         analyze(job, job["dir"] + "/src.mp4", req)
+        print(f"[job {job['id']}] transcribe+pick: {time.time() - t1:.1f}s", flush=True)
         job["status"], job["pct"], job["stage"] = "done", 100, "Ready"
     except Exception as e:
         job["status"], job["error"] = "error", clean_err(e)
@@ -325,7 +333,9 @@ def api_job(jid: str):
     if not j:
         return err("Job not found.", 404)
     out = {k: j[k] for k in ("id", "status", "pct", "stage", "title", "w", "h", "error")}
-    out["clips"] = [{k: c[k] for k in ("start", "end", "score", "title", "description", "tags")} for c in j["clips"]]
+    out["clips"] = [dict({k: c[k] for k in ("start", "end", "score", "title", "description", "tags")},
+                         words=[[w["w"], round(w["start"], 2), round(w["end"], 2)] for w in c["words"]])
+                    for c in j["clips"]]
     return out
 
 
