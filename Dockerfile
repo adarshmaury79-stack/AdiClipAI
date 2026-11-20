@@ -1,19 +1,13 @@
 FROM python:3.11-slim
-
-# ffmpeg (video cut/render) + ca-certificates
-RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg ca-certificates \
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg fonts-dejavu-core fonts-noto-core ca-certificates \
     && rm -rf /var/lib/apt/lists/*
-
-# deno (yt-dlp needs it for YouTube)
-COPY --from=denoland/deno:bin /deno /usr/local/bin/deno
-
+# Node is used by yt-dlp to solve YouTube challenges
+COPY --from=node:20-slim /usr/local/bin/node /usr/local/bin/node
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
+ARG WHISPER_MODEL=tiny
+ENV WHISPER_MODEL=${WHISPER_MODEL}
+RUN python -c "from faster_whisper import WhisperModel; WhisperModel('${WHISPER_MODEL}', device='cpu', compute_type='int8')"
 COPY . .
-# app.py serves static/index.html, so this works even if index.html is in the repo root
-RUN mkdir -p static && if [ -f index.html ]; then cp index.html static/index.html; fi
-
-ENV PYTHONUNBUFFERED=1
-CMD ["sh", "-c", "uvicorn app:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["sh", "-c", "uvicorn server:app --host 0.0.0.0 --port ${PORT:-10000}"]

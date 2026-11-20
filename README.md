@@ -1,17 +1,15 @@
-# AdiClipAI server
+# AdiClipAI
 
-## On a phone (free, no PC): Google Colab
-1. Open colab.research.google.com in Chrome, choose Upload and pick `AdiClipAI_Server.ipynb`.
-2. Run the cells in order. Upload `viral-clipper.zip` when asked.
-3. Open the link printed at the end. That page is the full working AdiClipAI.
-Keep the Colab tab open while you use it. Choose Runtime > Change runtime type > T4 GPU for faster transcription.
+Files: `index.html` (frontend), `server.py` + `clipper.py` (backend), `Dockerfile`, `requirements.txt`.
 
-## On a computer
-`pip install -r requirements.txt` (plus ffmpeg and deno), then `python app.py` and open http://localhost:8000
+## Deploy on Render
+1. Put all these files in the root of your GitHub repo (replace old ones).
+2. Render -> New -> Web Service -> pick the repo -> Language: **Docker**.
+3. Instance: Starter (512 MB+ RAM) is the minimum. Free works only for short videos.
+4. (Optional) Environment: `WHISPER_MODEL=base` for better accuracy (needs ~1 GB RAM), `MAX_VIDEO_MIN=90`, `MAX_UPLOAD_MB=500`.
+5. Deploy. Open your onrender.com URL.
 
-## If YouTube says "Sign in to confirm you're not a bot"
-Export your YouTube cookies as `cookies.txt` (Netscape format, with a browser extension) and put it next to app.py.
-Optional: GEMINI_API_KEY for better titles, WHISPER_MODEL=small for better Hindi.
-
-## Files
-`app.py` (backend), `static/index.html` (AdiClipAI frontend, served at `/`), `requirements.txt`
+## YouTube links blocked?
+YouTube often blocks server IPs. Fix: Render -> Environment -> Secret Files -> add `cookies.txt`
+(exported from a YouTube-logged-in browser). The server reads `/etc/secrets/cookies.txt` automatically.
+If it still fails, use the **Upload a video** button, which never touches YouTube.
